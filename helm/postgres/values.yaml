@@ -1,0 +1,12 @@
+replicaCount: 1
+image:
+  repository: postgres
+  tag: 15
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 5432
+env:
+  POSTGRES_DB: brzina
+  POSTGRES_USER: brzina_user
+  POSTGRES_PASSWORD: changeme

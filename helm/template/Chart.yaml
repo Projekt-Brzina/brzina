@@ -1,0 +1,4 @@
+apiVersion: v2
+name: template
+version: 0.1.0
+description: Template Helm chart for new Brzina services

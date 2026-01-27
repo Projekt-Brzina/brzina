@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: brzina
+data:
+  POSTGRES_DB: brzina
+  POSTGRES_USER: admin

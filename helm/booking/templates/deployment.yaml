@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "booking.fullname" . }}
+  labels:
+    app: {{ include "booking.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "booking.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "booking.name" . }}
+    spec:
+      containers:
+        - name: booking
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              value: {{ .Values.env.DATABASE_URL | quote }}
+            - name: RABBITMQ_URL
+              value: {{ .Values.env.RABBITMQ_URL | quote }}

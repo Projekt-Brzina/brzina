@@ -1,0 +1,4 @@
+apiVersion: v2
+name: car
+version: 0.1.0
+description: Helm chart for the Brzina car microservice

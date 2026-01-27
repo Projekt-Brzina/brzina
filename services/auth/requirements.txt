@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+asyncpg
+python-jose
+passlib[bcrypt]
+pydantic
+python-dotenv
+structlog
+prometheus-fastapi-instrumentator

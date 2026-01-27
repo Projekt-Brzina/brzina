@@ -1,0 +1,51 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: brzina
+          POSTGRES_USER: brzina_user
+          POSTGRES_PASSWORD: changeme
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U brzina_user" --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and test Python services
+        run: |
+          for svc in services/*; do
+            if [ -f "$svc/requirements.txt" ]; then
+              pip install -r "$svc/requirements.txt"
+              if [ -f "$svc/app/main.py" ]; then
+                python -m compileall "$svc/app/main.py"
+              fi
+            fi
+          done
+      - name: Build Docker images
+        run: |
+          for svc in services/*; do
+            if [ -f "$svc/Dockerfile" ]; then
+              docker build -t brzina-$(basename $svc):latest $svc
+            fi
+          done
+          if [ -f frontend/Dockerfile ]; then
+            docker build -t brzina-frontend:latest frontend
+          fi
+      # Add steps for pushing images and deploying with Helm/Kubectl as needed
