@@ -27,9 +27,8 @@ spec:
               value: "PLAINTEXT://:9092"
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
               value: "PLAINTEXT://kafka:9092"
-      # Zookeeper sidecar
-      - name: zookeeper
-        image: "{{ .Values.zookeeper.image.repository }}:{{ .Values.zookeeper.image.tag }}"
-        imagePullPolicy: {{ .Values.zookeeper.image.pullPolicy }}
-        ports:
-          - containerPort: 2181
+        - name: zookeeper
+          image: "{{ .Values.zookeeper.image.repository }}:{{ .Values.zookeeper.image.tag }}"
+          imagePullPolicy: {{ .Values.zookeeper.image.pullPolicy }}
+          ports:
+            - containerPort: 2181
