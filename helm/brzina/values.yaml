@@ -1,0 +1,95 @@
+# Global values for the Brzina umbrella chart
+# You can override any subchart values here using the subchart name as a key
+
+auth:
+  replicaCount: 1
+  image:
+    repository: brzina-auth
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+    JWT_SECRET: "supersecret"
+
+car:
+  replicaCount: 1
+  image:
+    repository: brzina-car
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+
+booking:
+  replicaCount: 1
+  image:
+    repository: brzina-booking
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+    KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+
+payment:
+  replicaCount: 1
+  image:
+    repository: brzina-payment
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+    KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+
+api:
+  replicaCount: 1
+  image:
+    repository: brzina-api
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: brzina-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+
+kafka:
+  replicaCount: 1
+
+postgres:
+  replicaCount: 1
+
+nginx-ingress:
+  controller:
+    replicaCount: 1
+    service:
+      type: LoadBalancer
+      ports:
+        http: 80
+        https: 443
+
+ingress:
+  host: brzina.local
+  frontendPath: /
+  apiPath: /api

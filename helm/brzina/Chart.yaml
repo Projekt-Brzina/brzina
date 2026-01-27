@@ -1,0 +1,40 @@
+apiVersion: v2
+name: brzina
+version: 0.1.0
+description: Umbrella chart for the Brzina platform
+
+# List all subcharts as dependencies
+# These must match the names in the subchart Chart.yaml files
+# and be present in the charts/ directory or via repository
+
+dependencies:
+  - name: auth
+    version: 0.1.0
+    repository: "file://../auth"
+  - name: car
+    version: 0.1.0
+    repository: "file://../car"
+  - name: booking
+    version: 0.1.0
+    repository: "file://../booking"
+  - name: payment
+    version: 0.1.0
+    repository: "file://../payment"
+  - name: api
+    version: 0.1.0
+    repository: "file://../api"
+  - name: frontend
+    version: 0.1.0
+    repository: "file://../frontend"
+  - name: kafka
+    version: 0.1.0
+    repository: "file://../kafka"
+  - name: postgres
+    version: 0.1.0
+    repository: "file://../postgres"
+  - name: nginx-ingress
+    version: 0.1.0
+    repository: "file://../nginx-ingress"
+  - name: ingress
+    version: 0.1.0
+    repository: "file://../ingress"
