@@ -1,0 +1,14 @@
+Brzina umbrella chart will deploy all microservices, infrastructure, and ingress for the platform.
+
+To install:
+
+  helm dependency update ./helm/brzina
+  helm install brzina ./helm/brzina
+
+You can override any subchart values in values.yaml.
+
+Check service status:
+
+  kubectl get pods -A
+
+Access the app at http://brzina.local (or the ingress IP).
