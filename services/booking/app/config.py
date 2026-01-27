@@ -10,9 +10,9 @@ class Settings(BaseSettings):
         "DATABASE_URL",
         "postgres://carshare_user:changeme@postgres.carshare.svc.cluster.local:5432/carshare",
     )
+    kafka_bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
 
     class Config:
         env_file = ".env"
-
 
 settings = Settings()

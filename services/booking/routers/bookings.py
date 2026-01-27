@@ -1,8 +1,23 @@
+
 from fastapi import APIRouter, HTTPException
 from ..db import get_pool
 from ..models import BookingCreate, Booking
+from ..config import settings
+from aiokafka import AIOKafkaProducer
+import asyncio
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
+
+kafka_producer = None
+
+async def get_kafka_producer():
+    global kafka_producer
+    if kafka_producer is None:
+        kafka_producer = AIOKafkaProducer(
+            bootstrap_servers=settings.kafka_bootstrap_servers
+        )
+        await kafka_producer.start()
+    return kafka_producer
 
 
 @router.post("/", response_model=Booking)
@@ -52,12 +67,66 @@ async def create_booking(payload: BookingCreate):
             payload.end_time,
         )
 
+        # Log event to booking_events (event sourcing)
+        import json
+        await conn.execute(
+            """
+            INSERT INTO booking_events (booking_id, tenant_id, event_type, event_data)
+            VALUES ($1, $2, $3, $4)
+            """,
+            row["id"],
+            row["tenant_id"],
+            "booking_created",
+            json.dumps({
+                "car_id": row["car_id"],
+                "borrower_user_id": row["borrower_user_id"],
+                "start_time": str(row["start_time"]),
+                "end_time": str(row["end_time"]),
+                "status": row["status"]
+            })
+        )
+
+    # Publish booking_created event to Kafka
+    producer = await get_kafka_producer()
+    import json
+    await producer.send_and_wait(
+        "booking_created",
+        json.dumps({
+            "booking_id": row["id"],
+            "tenant_id": row["tenant_id"]
+        }).encode("utf-8")
+    )
+
     return Booking(**row)
 
 
 @router.get("/", response_model=list[Booking])
 async def list_bookings(tenant_id: int, car_id: int | None = None, borrower_user_id: int | None = None):
     pool = await get_pool()
+
+@router.get("/events/replay/{booking_id}")
+async def replay_booking_events(booking_id: int, tenant_id: int):
+    """Replay all events for a booking (CQRS/event sourcing demo)."""
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            """
+            SELECT event_type, event_data, created_at
+            FROM booking_events
+            WHERE booking_id=$1 AND tenant_id=$2
+            ORDER BY created_at ASC
+            """,
+            booking_id, tenant_id
+        )
+    # For demo: just return the event log
+    return [
+        {
+            "event_type": r["event_type"],
+            "event_data": r["event_data"],
+            "created_at": r["created_at"]
+        }
+        for r in rows
+    ]
     query = """
         SELECT id, car_id, borrower_user_id, tenant_id, start_time, end_time, status
         FROM bookings

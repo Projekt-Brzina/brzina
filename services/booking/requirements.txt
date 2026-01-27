@@ -3,3 +3,6 @@ uvicorn
 asyncpg
 pydantic
 python-dotenv
+aiokafka
+structlog
+prometheus-fastapi-instrumentator

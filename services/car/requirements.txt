@@ -1,6 +1,11 @@
 fastapi
 uvicorn
 asyncpg
+httpx
+aiokafka
+strawberry-graphql[fastapi]
+structlog
+prometheus-fastapi-instrumentator
 python-jose
 passlib[bcrypt]
 pydantic

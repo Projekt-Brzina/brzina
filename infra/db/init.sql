@@ -42,6 +42,16 @@ CREATE TABLE IF NOT EXISTS bookings (
     created_at       TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+-- Booking Events (Event Sourcing)
+CREATE TABLE IF NOT EXISTS booking_events (
+    id SERIAL PRIMARY KEY,
+    booking_id INTEGER NOT NULL,
+    tenant_id INTEGER NOT NULL,
+    event_type VARCHAR(64) NOT NULL,
+    event_data JSONB NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 -- Payments (Payment service)
 CREATE TABLE IF NOT EXISTS payments (
     id           SERIAL PRIMARY KEY,
