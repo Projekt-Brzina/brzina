@@ -24,6 +24,11 @@ def create_app():
 	app = FastAPI(title=settings.service_name)
 	app.include_router(payments.router)
 
+	# OpenAPI docs endpoint (default at /docs, /openapi.json)
+	@app.get("/openapi", include_in_schema=False)
+	async def custom_openapi():
+		return app.openapi()
+
 	Instrumentator().instrument(app).expose(app)
 
 	@app.on_event("startup")

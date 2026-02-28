@@ -5,3 +5,5 @@ httpx
 pyjwt
 structlog
 prometheus-fastapi-instrumentator
+pydantic-settings
+pydantic[email]

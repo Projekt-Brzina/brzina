@@ -5,4 +5,4 @@ metadata:
   namespace: brzina
 data:
   POSTGRES_DB: brzina
-  POSTGRES_USER: admin
+  POSTGRES_USER: brzina_user

@@ -1,3 +1,7 @@
+import os
+from pydantic import AnyUrl
+from pydantic_settings import BaseSettings
+
 class Settings(BaseSettings):
     service_name: str = "car-service"
     environment: str = os.getenv("ENVIRONMENT", "local")
@@ -11,9 +15,5 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-
-settings = Settings()
-        env_file = ".env"
-
 
 settings = Settings()

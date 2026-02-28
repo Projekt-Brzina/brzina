@@ -15,13 +15,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: api
+                name: api-api
                 port:
                   number: 8000
           - path: /(.*)
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-frontend
                 port:
                   number: 80

@@ -17,7 +17,6 @@ import axios from 'axios';
 const bookings = ref([]);
 
 async function fetchBookings() {
-  // Replace with your backend URL and tenant_id
   const res = await axios.get('/api/bookings', { params: { tenant_id: 1 } });
   bookings.value = res.data;
 }

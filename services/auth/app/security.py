@@ -7,11 +7,13 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    import hashlib
+    return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
 
 def verify_password(password: str, hashed: str) -> bool:
-    return pwd_context.verify(password, hashed)
+    import hashlib
+    return hashlib.sha256(password.encode('utf-8')).hexdigest() == hashed
 
 
 def create_access_token(user_id: int, tenant_id: int):

@@ -21,7 +21,10 @@ const error = ref('');
 async function login() {
   try {
     const res = await axios.post('/api/auth/login', { email: email.value, password: password.value });
-    // Store JWT, redirect, etc.
+    // Store JWT in localStorage
+    localStorage.setItem('jwt', res.data.access_token);
+    // Set axios default Authorization header
+    axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.access_token}`;
     error.value = '';
     alert('Login successful!');
   } catch (e) {

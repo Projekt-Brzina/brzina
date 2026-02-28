@@ -8,3 +8,7 @@ service:
   port: 8000
 env:
   DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+  AUTH_SERVICE_URL: "http://auth-auth:8000"
+  CAR_SERVICE_URL: "http://car-car:8000"
+  BOOKING_SERVICE_URL: "http://booking-booking:8000"
+  PAYMENT_SERVICE_URL: "http://payment-payment:8000"

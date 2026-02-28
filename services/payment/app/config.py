@@ -1,6 +1,7 @@
 
 import os
-from pydantic import BaseSettings, AnyUrl
+from pydantic import AnyUrl
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
 	service_name: str = "payment-service"

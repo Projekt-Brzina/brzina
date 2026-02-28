@@ -1,3 +1,12 @@
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT FROM pg_catalog.pg_roles WHERE rolname = 'brzina_user'
+    ) THEN
+        CREATE ROLE brzina_user LOGIN PASSWORD 'changeme';
+    END IF;
+END
+$$;
 -- Tenants
 CREATE TABLE IF NOT EXISTS tenants (
     id          SERIAL PRIMARY KEY,
@@ -5,6 +14,11 @@ CREATE TABLE IF NOT EXISTS tenants (
     slug        VARCHAR(255) UNIQUE NOT NULL,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+-- Insert demo tenant if not exists
+INSERT INTO tenants (id, name, slug)
+    VALUES (1, 'Demo Tenant', 'demo')
+    ON CONFLICT (id) DO NOTHING;
 
 -- Users (Auth service)
 CREATE TABLE IF NOT EXISTS users (

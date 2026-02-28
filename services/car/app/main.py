@@ -21,6 +21,13 @@ def setup_logging():
         cache_logger_on_first_use=True,
     )
 
+app = FastAPI(title=settings.service_name)
+
+# OpenAPI docs endpoint (default at /docs, /openapi.json)
+@app.get("/openapi", include_in_schema=False)
+async def custom_openapi():
+    return app.openapi()
+
 weather_router = APIRouter()
 
 @weather_router.get("/weather/{city}")

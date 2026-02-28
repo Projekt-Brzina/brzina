@@ -23,3 +23,11 @@ spec:
           env:
             - name: DATABASE_URL
               value: {{ .Values.env.DATABASE_URL | quote }}
+            - name: AUTH_SERVICE_URL
+              value: {{ .Values.env.AUTH_SERVICE_URL | quote }}
+            - name: CAR_SERVICE_URL
+              value: {{ .Values.env.CAR_SERVICE_URL | quote }}
+            - name: BOOKING_SERVICE_URL
+              value: {{ .Values.env.BOOKING_SERVICE_URL | quote }}
+            - name: PAYMENT_SERVICE_URL
+              value: {{ .Values.env.PAYMENT_SERVICE_URL | quote }}

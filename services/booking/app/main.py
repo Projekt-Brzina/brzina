@@ -25,6 +25,11 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(bookings.router)
 
+    # OpenAPI docs endpoint (default at /docs, /openapi.json)
+    @app.get("/openapi", include_in_schema=False)
+    async def custom_openapi():
+        return app.openapi()
+
     Instrumentator().instrument(app).expose(app)
 
     @app.on_event("startup")

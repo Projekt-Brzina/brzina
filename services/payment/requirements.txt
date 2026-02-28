@@ -6,3 +6,5 @@ python-dotenv
 aiokafka
 structlog
 prometheus-fastapi-instrumentator
+pydantic-settings
+pydantic[email]

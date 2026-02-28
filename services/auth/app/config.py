@@ -1,3 +1,7 @@
+import os
+from pydantic import AnyUrl
+from pydantic_settings import BaseSettings
+
 class Settings(BaseSettings):
     service_name: str = "auth-service"
     environment: str = os.getenv("ENVIRONMENT", "local")

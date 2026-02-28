@@ -20,7 +20,8 @@ const error = ref('');
 
 async function register() {
   try {
-    const res = await axios.post('/api/auth/register', { email: email.value, password: password.value });
+    const tenant_id = 1; // Hardcoded for now
+    const res = await axios.post('/api/auth/register', { email: email.value, password: password.value, tenant_id });
     error.value = '';
     alert('Registration successful!');
   } catch (e) {

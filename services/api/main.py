@@ -39,6 +39,12 @@ app.add_middleware(
 
 Instrumentator().instrument(app).expose(app)
 
+# OpenAPI docs endpoint (default at /docs, /openapi.json)
+# Optionally, add a custom route for OpenAPI schema
+@app.get("/openapi", include_in_schema=False)
+async def custom_openapi():
+    return app.openapi()
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 CAR_SERVICE_URL = os.getenv("CAR_SERVICE_URL", "http://car:8000")
 BOOKING_SERVICE_URL = os.getenv("BOOKING_SERVICE_URL", "http://booking:8000")

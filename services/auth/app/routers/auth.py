@@ -10,6 +10,15 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 async def register(user: UserCreate):
     pool = await get_pool()
 
+    # Log password length and value (truncate for security)
+    import logging
+    logging.warning(f"Register password length: {len(user.password)}")
+    logging.warning(f"Register password preview: {user.password[:10]}")
+
+    # Truncate password to 72 chars for bcrypt
+    password = user.password[:72]
+    logging.warning(f"Truncated password length: {len(password)}")
+
     async with pool.acquire() as conn:
         existing = await conn.fetchrow(
             "SELECT id FROM users WHERE email=$1 AND tenant_id=$2",
@@ -18,7 +27,7 @@ async def register(user: UserCreate):
         if existing:
             raise HTTPException(status_code=400, detail="User already exists")
 
-        hashed = hash_password(user.password)
+        hashed = hash_password(password)
 
         row = await conn.fetchrow(
             """

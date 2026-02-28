@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:16
+          image: postgres:15
           ports:
             - containerPort: 5432
           envFrom:
@@ -27,6 +27,12 @@ spec:
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: initdb
+          configMap:
+            name: postgres-initdb
   volumeClaimTemplates:
     - metadata:
         name: postgres-data
