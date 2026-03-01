@@ -1,3 +1,5 @@
+# Standard imports
+from datetime import datetime
 from pydantic import BaseModel
 from pydantic import EmailStr
 # For tenant API
@@ -25,8 +27,8 @@ class User(BaseModel):
     is_admin: bool = False
     tenant_id: int
     is_active: bool = True
-    created_at: str = None
-    updated_at: str = None
+    created_at: datetime = None
+    updated_at: datetime = None
 
 
 class UserLogin(BaseModel):

@@ -109,9 +109,12 @@ async def health():
 
 # Cars CRUD (require JWT)
 
-# Accept both /cars and /cars/ for GET and POST
+
+# Accept both /cars, /cars/, /api/cars, /api/cars/ for GET and POST
 @app.api_route("/cars", methods=["GET", "POST"])
 @app.api_route("/cars/", methods=["GET", "POST"])
+@app.api_route("/api/cars", methods=["GET", "POST"])
+@app.api_route("/api/cars/", methods=["GET", "POST"])
 async def cars_root(request: Request):
     if request.method == "GET":
         return await proxy_request("GET", f"{CAR_SERVICE_URL}/cars/", request, require_jwt=True)
@@ -136,8 +139,18 @@ async def cars_root(request: Request):
 async def cars_detail(car_id: int, request: Request):
     return await proxy_request(request.method, f"{CAR_SERVICE_URL}/cars/{car_id}", request, require_jwt=True)
 
+
+# Proxy route for /api/cars/my
+@app.api_route("/api/cars/my", methods=["GET"])
+async def cars_my(request: Request):
+    return await proxy_request("GET", f"{CAR_SERVICE_URL}/cars/my", request, require_jwt=True)
+
+
 # Bookings CRUD (require JWT)
 @app.api_route("/bookings", methods=["GET", "POST"])
+@app.api_route("/bookings/", methods=["GET", "POST"])
+@app.api_route("/api/bookings", methods=["GET", "POST"])
+@app.api_route("/api/bookings/", methods=["GET", "POST"])
 async def bookings_root(request: Request):
     return await proxy_request(request.method, f"{BOOKING_SERVICE_URL}/bookings", request, require_jwt=True)
 
@@ -170,12 +183,19 @@ async def booking_details(booking_id: int, request: Request):
 
 # Auth endpoints
 @app.api_route("/auth/register", methods=["POST"])
+@app.api_route("/api/auth/register", methods=["POST"])
 async def auth_register(request: Request):
     return await proxy_request("POST", f"{AUTH_SERVICE_URL}/auth/register", request)
 
 @app.api_route("/auth/login", methods=["POST"])
+@app.api_route("/api/auth/login", methods=["POST"])
 async def auth_login(request: Request):
     return await proxy_request("POST", f"{AUTH_SERVICE_URL}/auth/login", request)
+
+@app.api_route("/auth/me", methods=["GET"])
+@app.api_route("/api/auth/me", methods=["GET"])
+async def auth_me(request: Request):
+    return await proxy_request("GET", f"{AUTH_SERVICE_URL}/auth/me", request)
 
 # Payments endpoints
 @app.api_route("/payments", methods=["GET", "POST"])
