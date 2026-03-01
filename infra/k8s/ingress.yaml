@@ -1,25 +1,52 @@
+
+# Ingress for API (with rewrite)
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: brzina-ingress
+  name: brzina-api-ingress
   namespace: brzina
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
     - host: brzina.local
       http:
         paths:
-          - path: /api/?(.*)
-            pathType: Prefix
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: api-api
                 port:
                   number: 8000
-          - path: /(.*)
-            pathType: Prefix
+
+# Ingress for frontend (SPA/assets, no rewrite)
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: brzina-frontend-ingress
+  namespace: brzina
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: brzina.local
+      http:
+        paths:
+          - path: /(.*\.(js|css|png|jpg|ico|svg|woff2?))$
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: frontend-frontend
+                port:
+                  number: 80
+          - path: /.*
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: frontend-frontend

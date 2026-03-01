@@ -46,11 +46,11 @@ async def custom_openapi():
     return app.openapi()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-CAR_SERVICE_URL = os.getenv("CAR_SERVICE_URL", "http://car:8000")
-BOOKING_SERVICE_URL = os.getenv("BOOKING_SERVICE_URL", "http://booking:8000")
-AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://auth:8000")
-PAYMENT_SERVICE_URL = os.getenv("PAYMENT_SERVICE_URL", "http://payment:8000")
-WEATHER_SERVICE_URL = os.getenv("CAR_SERVICE_URL", "http://car:8000")  # Weather is in car
+CAR_SERVICE_URL = os.getenv("CAR_SERVICE_URL", "http://car-car:8000")
+BOOKING_SERVICE_URL = os.getenv("BOOKING_SERVICE_URL", "http://booking-booking:8000")
+AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://auth-auth:8000")
+PAYMENT_SERVICE_URL = os.getenv("PAYMENT_SERVICE_URL", "http://payment-payment:8000")
+WEATHER_SERVICE_URL = os.getenv("CAR_SERVICE_URL", "http://car-car:8000")  # Weather is in car
 JWT_SECRET = os.getenv("JWT_SECRET", "supersecret")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
@@ -66,7 +66,7 @@ def get_jwt_payload(request: Request):
         return None
 
 async def proxy_request(method, url, request: Request, with_body=True, require_jwt=False):
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         params = dict(request.query_params)
         headers = dict(request.headers)
         data = await request.body() if with_body else None
@@ -77,6 +77,8 @@ async def proxy_request(method, url, request: Request, with_body=True, require_j
         if user_ctx:
             headers["x-user-id"] = str(user_ctx.get("sub", ""))
             headers["x-tenant-id"] = str(user_ctx.get("tenant_id", ""))
+        # Debug: print all outgoing headers
+        print("[DEBUG] proxy_request outgoing headers:", headers)
         try:
             resp = await client.request(
                 method,
@@ -106,9 +108,29 @@ async def health():
 
 
 # Cars CRUD (require JWT)
+
+# Accept both /cars and /cars/ for GET and POST
 @app.api_route("/cars", methods=["GET", "POST"])
+@app.api_route("/cars/", methods=["GET", "POST"])
 async def cars_root(request: Request):
-    return await proxy_request(request.method, f"{CAR_SERVICE_URL}/cars", request, require_jwt=True)
+    if request.method == "GET":
+        return await proxy_request("GET", f"{CAR_SERVICE_URL}/cars/", request, require_jwt=True)
+    else:
+        # Ensure Content-Type is application/json if not set
+        if request.headers.get("content-type", "").startswith("application/json"):
+            return await proxy_request("POST", f"{CAR_SERVICE_URL}/cars", request, require_jwt=True)
+        else:
+            # Rebuild request with correct Content-Type
+            data = await request.body()
+            headers = dict(request.headers)
+            headers["content-type"] = "application/json"
+            async with httpx.AsyncClient(follow_redirects=True) as client:
+                resp = await client.post(f"{CAR_SERVICE_URL}/cars", content=data, headers=headers)
+                return Response(
+                    content=resp.content,
+                    status_code=resp.status_code,
+                    headers={k: v for k, v in resp.headers.items() if k.lower() != 'content-encoding'}
+                )
 
 @app.api_route("/cars/{car_id}", methods=["GET", "PUT", "DELETE"])
 async def cars_detail(car_id: int, request: Request):

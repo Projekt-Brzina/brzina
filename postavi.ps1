@@ -48,3 +48,24 @@ kubectl apply -f infra/k8s/ingress.yaml
 kubectl get pods,svc,deployments
 
 Write-Host "Deployment complete! Check your ingress address and open the frontend in your browser."
+kubectl run -it --rm debug --image=alpine --restart=Never -n brzina -- sh
+
+helm upgrade --install api helm/api -n brzina
+helm upgrade --install auth helm/auth -n brzina
+helm upgrade --install booking helm/booking -n brzina
+helm upgrade --install car helm/car -n brzina
+helm upgrade --install payment helm/payment -n brzina
+helm upgrade --install frontend helm/frontend -n brzina
+
+kubectl delete pod -l app=api -n brzina
+kubectl delete pod -l app=auth -n brzina
+kubectl delete pod -l app=booking -n brzina
+kubectl delete pod -l app=car -n brzina
+kubectl delete pod -l app=payment -n brzina
+kubectl delete pod -l app=frontend -n brzina
+
+curl -H 
+"Authorization: Bearer <>" 
+-d '{"brand":"eet","hourly_rate":3, "model": "rwe", "plate": 123123, "tenant_id":1}'  -v http://car-car:8000/cars/
+
+"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidGVuYW50X2lkIjoxLCJleHAiOjE3NzIzNzg0MjZ9.wC9FS-7a_Dj1UVfTWxM2T2YCF9SBPQKI8cAZ6sKiAMs"

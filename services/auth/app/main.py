@@ -9,6 +9,8 @@ def create_app():
 
     app.include_router(health.router)
     app.include_router(auth.router)
+    from .routers.tenants import router as tenants_router
+    app.include_router(tenants_router)
 
     # OpenAPI docs endpoint (default at /docs, /openapi.json)
     @app.get("/openapi", include_in_schema=False)

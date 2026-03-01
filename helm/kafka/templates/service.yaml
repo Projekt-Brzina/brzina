@@ -4,9 +4,9 @@ kind: Service
 metadata:
   name: zookeeper
 spec:
-  type: {{ .Values.zookeeper.service.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .Values.zookeeper.service.port }}
+    - port: 2181
       targetPort: 2181
   selector:
     app: zookeeper
@@ -16,9 +16,9 @@ kind: Service
 metadata:
   name: kafka
 spec:
-  type: {{ .Values.kafka.service.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .Values.kafka.service.port }}
+    - port: 9092
       targetPort: 9092
   selector:
     app: kafka

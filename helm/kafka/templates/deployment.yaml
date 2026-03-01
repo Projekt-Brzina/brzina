@@ -17,8 +17,7 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: {{ .Values.zookeeper.image }}
-          imagePullPolicy: {{ .Values.zookeeper.pullPolicy }}
+          image: wurstmeister/zookeeper:latest
           ports:
             - containerPort: 2181
 ---
@@ -40,8 +39,7 @@ spec:
     spec:
       containers:
         - name: kafka
-          image: {{ .Values.kafka.image }}
-          imagePullPolicy: {{ .Values.kafka.pullPolicy }}
+          image: wurstmeister/kafka:latest
           ports:
             - containerPort: 9092
           env:
@@ -55,3 +53,5 @@ spec:
               value: "1"
             - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
               value: "1"
+            - name: KAFKA_PORT
+              value: "9092"

@@ -20,40 +20,53 @@ INSERT INTO tenants (id, name, slug)
     VALUES (1, 'Demo Tenant', 'demo')
     ON CONFLICT (id) DO NOTHING;
 
--- Users (Auth service)
+
 CREATE TABLE IF NOT EXISTS users (
     id             SERIAL PRIMARY KEY,
     email          VARCHAR(255) NOT NULL,
     password_hash  VARCHAR(255) NOT NULL,
+    name           VARCHAR(255),
     tenant_id      INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    payment_info   VARCHAR(255),
+    is_admin       BOOLEAN NOT NULL DEFAULT FALSE,
+    is_active      BOOLEAN NOT NULL DEFAULT TRUE,
     created_at     TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at     TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE (email, tenant_id)
 );
 
--- Cars (Car service)
+
 CREATE TABLE IF NOT EXISTS cars (
     id             SERIAL PRIMARY KEY,
     brand          VARCHAR(255) NOT NULL,
     model          VARCHAR(255) NOT NULL,
     plate          VARCHAR(64) NOT NULL,
-    hourly_rate    INTEGER NOT NULL, -- in smallest unit (e.g. cents)
+    hourly_rate    NUMERIC(10,2) NOT NULL,
     owner_user_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     tenant_id      INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    year           INTEGER,
+    color          VARCHAR(64),
+    description    TEXT,
     status         VARCHAR(32) NOT NULL DEFAULT 'active',
     created_at     TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at     TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE (plate, tenant_id)
 );
 
--- Bookings (Booking service)
+
 CREATE TABLE IF NOT EXISTS bookings (
-    id               SERIAL PRIMARY KEY,
-    car_id           INTEGER NOT NULL REFERENCES cars(id) ON DELETE CASCADE,
-    borrower_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    tenant_id        INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-    start_time       TIMESTAMP NOT NULL,
-    end_time         TIMESTAMP NOT NULL,
-    status           VARCHAR(32) NOT NULL DEFAULT 'requested', -- requested, confirmed, cancelled, completed
-    created_at       TIMESTAMP NOT NULL DEFAULT NOW()
+    id                 SERIAL PRIMARY KEY,
+    car_id             INTEGER NOT NULL REFERENCES cars(id) ON DELETE CASCADE,
+    borrower_user_id   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    tenant_id          INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    start_time         TIMESTAMP NOT NULL,
+    end_time           TIMESTAMP NOT NULL,
+    total_cost         NUMERIC(10,2),
+    status             VARCHAR(32) NOT NULL DEFAULT 'requested', -- requested, confirmed, cancelled, completed
+    payment_status     VARCHAR(32),
+    cancellation_reason VARCHAR(255),
+    created_at         TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at         TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Booking Events (Event Sourcing)

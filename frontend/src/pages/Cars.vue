@@ -43,7 +43,7 @@ const carError = ref('');
 const isLoggedIn = ref(!!localStorage.getItem('jwt'));
 
 async function fetchCars() {
-  const res = await axios.get('/api/cars', { params: { tenant_id: 1 } });
+  const res = await axios.get('/api/cars/', { params: { tenant_id: 1 } });
   cars.value = res.data;
   // Fetch user's cars if logged in
   if (isLoggedIn.value) {
@@ -64,6 +64,8 @@ async function addCar() {
       plate: plate.value,
       hourly_rate: hourly_rate.value,
       tenant_id: 1
+    }, {
+      headers: { 'Content-Type': 'application/json' }
     });
     carError.value = '';
     brand.value = model.value = plate.value = '';

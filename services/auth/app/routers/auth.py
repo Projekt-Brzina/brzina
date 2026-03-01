@@ -3,6 +3,8 @@ from ..db import get_pool
 from ..security import hash_password, verify_password, create_access_token
 from ..models import UserCreate, UserLogin, Token
 
+
+from .tenants import router as tenants_router
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
@@ -29,13 +31,14 @@ async def register(user: UserCreate):
 
         hashed = hash_password(password)
 
+
         row = await conn.fetchrow(
             """
-            INSERT INTO users (email, password_hash, tenant_id)
-            VALUES ($1, $2, $3)
+            INSERT INTO users (email, password_hash, name, payment_info, is_admin, tenant_id)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id
             """,
-            user.email, hashed, user.tenant_id
+            user.email, hashed, user.name, user.payment_info, user.is_admin, user.tenant_id
         )
 
     token = create_access_token(row["id"], user.tenant_id)
