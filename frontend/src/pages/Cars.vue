@@ -21,7 +21,10 @@
         <input v-model="brand" placeholder="Brand" required />
         <input v-model="model" placeholder="Model" required />
         <input v-model="plate" placeholder="Plate" required />
-        <input v-model="hourly_rate" placeholder="Hourly Rate" type="number" required />
+        <input v-model="hourly_rate" placeholder="Hourly Rate" type="number" step="0.01" required />
+        <input v-model="year" placeholder="Year" type="number" />
+        <input v-model="color" placeholder="Color" />
+        <input v-model="description" placeholder="Description" />
         <button type="submit">Add Car</button>
       </form>
       <div v-if="carError" style="color:red">{{ carError }}</div>
@@ -39,6 +42,9 @@ const brand = ref('');
 const model = ref('');
 const plate = ref('');
 const hourly_rate = ref(0);
+const year = ref('');
+const color = ref('');
+const description = ref('');
 const carError = ref('');
 const isLoggedIn = ref(!!localStorage.getItem('jwt'));
 
@@ -63,13 +69,17 @@ async function addCar() {
       model: model.value,
       plate: plate.value,
       hourly_rate: hourly_rate.value,
+      year: year.value ? Number(year.value) : undefined,
+      color: color.value,
+      description: description.value,
       tenant_id: 1
     }, {
       headers: { 'Content-Type': 'application/json' }
     });
     carError.value = '';
-    brand.value = model.value = plate.value = '';
+    brand.value = model.value = plate.value = color.value = description.value = '';
     hourly_rate.value = 0;
+    year.value = '';
     fetchCars();
   } catch (e) {
     carError.value = 'Failed to add car.';

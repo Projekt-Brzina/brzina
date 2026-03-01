@@ -1,12 +1,17 @@
 from pydantic import BaseModel
 
 
+
 class CarCreate(BaseModel):
     brand: str
     model: str
     plate: str
-    hourly_rate: int
+    hourly_rate: float
+    year: int = None
+    color: str = None
+    description: str = None
     tenant_id: int
+
 
 
 class Car(BaseModel):
@@ -14,6 +19,9 @@ class Car(BaseModel):
     brand: str
     model: str
     plate: str
-    hourly_rate: int
+    hourly_rate: float
+    year: int = None
+    color: str = None
+    description: str = None
     owner_user_id: int
     tenant_id: int
