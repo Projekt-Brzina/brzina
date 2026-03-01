@@ -19,6 +19,10 @@ const password = ref('');
 const error = ref('');
 
 async function login() {
+  if (!email.value || !password.value) {
+    error.value = 'Email and password are required.';
+    return;
+  }
   try {
     const res = await axios.post('/api/auth/login', { email: email.value, password: password.value });
     // Store JWT in localStorage

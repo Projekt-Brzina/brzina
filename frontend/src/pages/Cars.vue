@@ -4,7 +4,10 @@
     <button @click="fetchCars">Refresh</button>
     <ul>
       <li v-for="car in cars" :key="car.id">
-        {{ car.brand }} {{ car.model }} ({{ car.plate }}) - {{ car.hourly_rate }} €/h
+        <b>{{ car.brand }} {{ car.model }}</b> ({{ car.plate }})<br>
+        Year: {{ car.year }} | Color: {{ car.color }}<br>
+        Rate: <b>{{ car.hourly_rate }} €/h</b><br>
+        <span v-if="car.description">Description: {{ car.description }}</span>
       </li>
     </ul>
 
@@ -12,17 +15,35 @@
       <h3>Your Cars</h3>
       <ul>
         <li v-for="car in myCars" :key="car.id">
-          {{ car.brand }} {{ car.model }} ({{ car.plate }}) - {{ car.hourly_rate }} €/h
+          <span v-if="editCarId !== car.id">
+            <b>{{ car.brand }} {{ car.model }}</b> ({{ car.plate }})<br>
+            Year: {{ car.year }} | Color: {{ car.color }}<br>
+            Rate: <b>{{ car.hourly_rate }} €/h</b><br>
+            <span v-if="car.description">Description: {{ car.description }}</span><br>
+            <button @click="startEditCar(car)">Edit</button>
+            <button @click="deleteCar(car.id)">Delete</button>
+          </span>
+          <span v-else>
+            <input v-model="editCar.brand" placeholder="Brand" />
+            <input v-model="editCar.model" placeholder="Model" />
+            <input v-model="editCar.plate" placeholder="Plate" />
+            <input v-model="editCar.hourly_rate" placeholder="Hourly Rate" type="number" step="0.01" />
+            <input v-model="editCar.year" placeholder="Year" type="number" />
+            <input v-model="editCar.color" placeholder="Color" />
+            <input v-model="editCar.description" placeholder="Description" />
+            <button @click="saveEditCar(car.id)">Save</button>
+            <button @click="cancelEditCar">Cancel</button>
+          </span>
         </li>
       </ul>
 
       <h3>Add a Car</h3>
       <form @submit.prevent="addCar">
-        <input v-model="brand" placeholder="Brand" required />
-        <input v-model="model" placeholder="Model" required />
-        <input v-model="plate" placeholder="Plate" required />
-        <input v-model="hourly_rate" placeholder="Hourly Rate" type="number" step="0.01" required />
-        <input v-model="year" placeholder="Year" type="number" />
+        <input v-model="brand" placeholder="Brand" required minlength="2" />
+        <input v-model="model" placeholder="Model" required minlength="1" />
+        <input v-model="plate" placeholder="Plate" required minlength="3" />
+        <input v-model="hourly_rate" placeholder="Hourly Rate" type="number" step="0.01" required min="0.01" />
+        <input v-model="year" placeholder="Year" type="number" min="1900" max="2100" />
         <input v-model="color" placeholder="Color" />
         <input v-model="description" placeholder="Description" />
         <button type="submit">Add Car</button>
@@ -46,6 +67,41 @@ const year = ref('');
 const color = ref('');
 const description = ref('');
 const carError = ref('');
+const editCarId = ref(null);
+const editCar = ref({});
+function startEditCar(car) {
+  editCarId.value = car.id;
+  editCar.value = { ...car };
+}
+
+function cancelEditCar() {
+  editCarId.value = null;
+  editCar.value = {};
+}
+
+async function saveEditCar(id) {
+  try {
+    await axios.put(`/api/cars/${id}`, {
+      ...editCar.value
+    }, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    editCarId.value = null;
+    editCar.value = {};
+    fetchCars();
+  } catch (e) {
+    carError.value = 'Failed to update car.';
+  }
+}
+
+async function deleteCar(id) {
+  try {
+    await axios.delete(`/api/cars/${id}`);
+    fetchCars();
+  } catch (e) {
+    carError.value = 'Failed to delete car.';
+  }
+}
 const isLoggedIn = ref(!!localStorage.getItem('jwt'));
 
 async function fetchCars() {
@@ -63,6 +119,14 @@ async function fetchCars() {
 }
 
 async function addCar() {
+  if (!brand.value || !model.value || !plate.value || !hourly_rate.value) {
+    carError.value = 'All required fields must be filled.';
+    return;
+  }
+  if (brand.value.length < 2 || plate.value.length < 3 || hourly_rate.value <= 0) {
+    carError.value = 'Please enter valid car details.';
+    return;
+  }
   try {
     await axios.post('/api/cars', {
       brand: brand.value,

@@ -190,3 +190,15 @@ async def payments_detail(payment_id: int, request: Request):
 @app.get("/weather/{city}")
 async def weather(city: str, request: Request):
     return await proxy_request("GET", f"{WEATHER_SERVICE_URL}/weather/{city}", request, with_body=False)
+
+# Tenants endpoint (proxied to auth service)
+@app.api_route("/api/tenants", methods=["GET"])
+@app.api_route("/api/tenants/", methods=["GET"])
+async def tenants_root(request: Request):
+    return await proxy_request("GET", f"{AUTH_SERVICE_URL}/tenants", request)
+
+# Also support /tenants and /tenants/ for ingress rewrite
+@app.api_route("/tenants", methods=["GET"])
+@app.api_route("/tenants/", methods=["GET"])
+async def tenants_root_rewrite(request: Request):
+    return await proxy_request("GET", f"{AUTH_SERVICE_URL}/tenants", request)

@@ -3,8 +3,8 @@
     <h2>Register</h2>
     <form @submit.prevent="register">
       <label>Email: <input v-model="email" type="email" required /></label><br />
-      <label>Password: <input v-model="password" type="password" required /></label><br />
-      <label>Name: <input v-model="name" type="text" required /></label><br />
+      <label>Password: <input v-model="password" type="password" required minlength="6" /></label><br />
+      <label>Name: <input v-model="name" type="text" required minlength="2" /></label><br />
       <label>Payment Info: <input v-model="payment_info" type="text" /></label><br />
       <label>Tenant:
         <select v-model="tenant_id" required>
@@ -40,6 +40,14 @@ onMounted(async () => {
 });
 
 async function register() {
+  if (!email.value || !password.value || !name.value || !tenant_id.value) {
+    error.value = 'All required fields must be filled.';
+    return;
+  }
+  if (password.value.length < 6) {
+    error.value = 'Password must be at least 6 characters.';
+    return;
+  }
   try {
     const res = await axios.post('/api/auth/register', {
       email: email.value,

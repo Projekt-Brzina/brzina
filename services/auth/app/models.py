@@ -1,10 +1,10 @@
-
+from pydantic import BaseModel
+from pydantic import EmailStr
 # For tenant API
 class Tenant(BaseModel):
     id: int
     name: str
     slug: str
-from pydantic import BaseModel, EmailStr
 
 
 

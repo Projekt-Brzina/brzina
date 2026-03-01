@@ -7,8 +7,10 @@
       <router-link to="/bookings">Bookings</router-link> |
       <router-link to="/login">Login</router-link> |
       <router-link to="/register">Register</router-link>
+      <router-link v-if="isLoggedIn" to="/profile" style="margin-left:10px">Profile</router-link>
+      <router-link v-if="isLoggedIn && userInfo.is_admin" to="/admin" style="margin-left:10px; color:orange">Admin</router-link>
       <span v-if="isLoggedIn" style="margin-left:20px; color:green">
-        Logged in as {{ userInfo.email }} (tenant: {{ userInfo.tenant_id }})
+        Logged in as {{ userInfo.name || userInfo.email }} (tenant: {{ userInfo.tenant_id }})<span v-if="userInfo.payment_info"> | Payment: {{ userInfo.payment_info }}</span>
       </span>
       <button v-if="isLoggedIn" @click="logout" style="margin-left:10px">Logout</button>
     </nav>
@@ -17,29 +19,28 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 const isLoggedIn = ref(!!localStorage.getItem('jwt'));
+const userInfo = ref({});
 
-function parseJwt(token) {
+async function fetchUserInfo() {
+  if (!isLoggedIn.value) {
+    userInfo.value = {};
+    return;
+  }
   try {
-    return JSON.parse(atob(token.split('.')[1]));
+    const res = await axios.get('/api/auth/me', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` }
+    });
+    userInfo.value = res.data;
   } catch (e) {
-    return {};
+    userInfo.value = {};
   }
 }
 
-const userInfo = computed(() => {
-  if (!isLoggedIn.value) return {};
-  const token = localStorage.getItem('jwt');
-  if (!token) return {};
-  const payload = parseJwt(token);
-  return {
-    email: payload.email || payload.sub || 'unknown',
-    tenant_id: payload.tenant_id || 'unknown',
-  };
-});
+onMounted(fetchUserInfo);
 
 function logout() {
   localStorage.removeItem('jwt');

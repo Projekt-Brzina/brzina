@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 
+
 class CarCreate(BaseModel):
     brand: str
     model: str
@@ -25,3 +26,5 @@ class Car(BaseModel):
     description: str = None
     owner_user_id: int
     tenant_id: int
+    created_at: str = None
+    updated_at: str = None

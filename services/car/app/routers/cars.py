@@ -12,9 +12,9 @@ async def create_car(car: CarCreate, user_id: int = 1):
     async with pool.acquire() as conn:
         row = await conn.fetchrow(
             """
-            INSERT INTO cars (brand, model, plate, hourly_rate, year, color, description, owner_user_id, tenant_id)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-            RETURNING id, brand, model, plate, hourly_rate, year, color, description, owner_user_id, tenant_id
+            INSERT INTO cars (brand, model, plate, hourly_rate, year, color, description, owner_user_id, tenant_id, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
+            RETURNING id, brand, model, plate, hourly_rate, year, color, description, owner_user_id, tenant_id, created_at, updated_at
             """,
             car.brand, car.model, car.plate, car.hourly_rate, car.year, car.color, car.description, user_id, car.tenant_id
         )
@@ -28,7 +28,7 @@ async def list_cars(tenant_id: int):
     async with pool.acquire() as conn:
         rows = await conn.fetch(
             """
-            SELECT id, brand, model, plate, hourly_rate, year, color, description, owner_user_id, tenant_id
+            SELECT id, brand, model, plate, hourly_rate, year, color, description, owner_user_id, tenant_id, created_at, updated_at
             FROM cars
             WHERE tenant_id=$1
             """,
@@ -59,7 +59,7 @@ async def list_my_cars(tenant_id: int, user_id: int = None, x_user_id: int = Hea
     async with pool.acquire() as conn:
         rows = await conn.fetch(
             """
-            SELECT id, brand, model, plate, hourly_rate, year, color, description, owner_user_id, tenant_id
+            SELECT id, brand, model, plate, hourly_rate, year, color, description, owner_user_id, tenant_id, created_at, updated_at
             FROM cars
             WHERE tenant_id=$1 AND owner_user_id=$2
             """,

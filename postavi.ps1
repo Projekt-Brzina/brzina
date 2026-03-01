@@ -2,12 +2,12 @@
 kind create cluster --config infra/kind/kind-config.yaml
 
 # 2. Build Docker images
-docker build -t brzina-api:latest services/api
-docker build -t brzina-auth:latest services/auth
-docker build -t brzina-booking:latest services/booking
-docker build -t brzina-car:latest services/car
-docker build -t brzina-payment:latest services/payment
-docker build -t brzina-frontend:latest frontend
+docker build --no-cache -t brzina-api:latest services/api
+docker build --no-cache -t brzina-auth:latest services/auth
+docker build --no-cache -t brzina-booking:latest services/booking
+docker build --no-cache -t brzina-car:latest services/car
+docker build --no-cache -t brzina-payment:latest services/payment
+docker build --no-cache -t brzina-frontend:latest frontend
 
 # 3. Load images into Kind
 kind load docker-image brzina-api:latest
