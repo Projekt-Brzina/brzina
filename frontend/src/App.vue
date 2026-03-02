@@ -1,20 +1,31 @@
 <template>
-  <div>
-    <h1>Brzina Car Sharing</h1>
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/cars">Cars</router-link> |
-      <router-link to="/bookings">Bookings</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/register">Register</router-link>
-      <router-link v-if="isLoggedIn" to="/profile" style="margin-left:10px">Profile</router-link>
-      <router-link v-if="isLoggedIn && userInfo.is_admin" to="/admin" style="margin-left:10px; color:orange">Admin</router-link>
-      <span v-if="isLoggedIn" style="margin-left:20px; color:green">
-        Logged in as {{ userInfo.name || userInfo.email }} (tenant: {{ tenantName }})<span v-if="userInfo.payment_info"> | Payment: {{ userInfo.payment_info }}</span>
-      </span>
-      <button v-if="isLoggedIn" @click="logout" style="margin-left:10px">Logout</button>
+  <div class="container-fluid p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Brzina Car Sharing</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><router-link class="nav-link" to="/">Home</router-link></li>
+            <li class="nav-item"><router-link class="nav-link" to="/cars">Cars</router-link></li>
+            <li class="nav-item"><router-link class="nav-link" to="/bookings">Bookings</router-link></li>
+            <li class="nav-item"><router-link class="nav-link" to="/login">Login</router-link></li>
+            <li class="nav-item"><router-link class="nav-link" to="/register">Register</router-link></li>
+            <li class="nav-item" v-if="isLoggedIn"><router-link class="nav-link" to="/profile">Profile</router-link></li>
+            <li class="nav-item" v-if="isLoggedIn && userInfo.is_admin"><router-link class="nav-link text-warning" to="/admin">Admin</router-link></li>
+          </ul>
+          <span v-if="isLoggedIn" class="navbar-text text-light me-3">
+            Logged in as {{ userInfo.name || userInfo.email }} (tenant: {{ tenantName }})<span v-if="userInfo.payment_info"> | Payment: {{ userInfo.payment_info }}</span>
+          </span>
+          <button v-if="isLoggedIn" class="btn btn-outline-light btn-sm" @click="logout">Logout</button>
+        </div>
+      </div>
     </nav>
-    <router-view />
+    <main class="container">
+      <router-view />
+    </main>
   </div>
 </template>
 

@@ -1,13 +1,21 @@
 <template>
-  <div>
-    <h2>Edit Profile</h2>
-    <form @submit.prevent="saveProfile">
-      <label>Name: <input v-model="name" type="text" /></label><br />
-      <label>Payment Info: <input v-model="payment_info" type="text" /></label><br />
-      <button type="submit">Save</button>
+  <div class="container py-4">
+    <h2 class="mb-3">Edit Profile</h2>
+    <form @submit.prevent="saveProfile" class="row g-3 mb-4">
+      <div class="col-md-6">
+        <label class="form-label">Name:</label>
+        <input v-model="name" type="text" class="form-control" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Payment Info:</label>
+        <input v-model="payment_info" type="text" class="form-control" />
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
     </form>
-    <div v-if="msg" style="color:green">{{ msg }}</div>
-    <div v-if="error" style="color:red">{{ error }}</div>
+    <div v-if="msg" class="alert alert-success">{{ msg }}</div>
+    <div v-if="error" class="alert alert-danger">{{ error }}</div>
   </div>
 </template>
 

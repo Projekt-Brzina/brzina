@@ -1,20 +1,35 @@
 <template>
-  <div>
-    <h2>Register</h2>
-    <form @submit.prevent="register">
-      <label>Email: <input v-model="email" type="email" required /></label><br />
-      <label>Password: <input v-model="password" type="password" required minlength="6" /></label><br />
-      <label>Name: <input v-model="name" type="text" required minlength="2" /></label><br />
-      <label>Payment Info: <input v-model="payment_info" type="text" /></label><br />
-      <label>Tenant:
-        <select v-model="tenant_id" required>
+  <div class="container py-4">
+    <h2 class="mb-3">Register</h2>
+    <form @submit.prevent="register" class="row g-3 mb-4">
+      <div class="col-md-6">
+        <label class="form-label">Email:</label>
+        <input v-model="email" type="email" class="form-control" required />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Password:</label>
+        <input v-model="password" type="password" class="form-control" required minlength="6" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Name:</label>
+        <input v-model="name" type="text" class="form-control" required minlength="2" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Payment Info:</label>
+        <input v-model="payment_info" type="text" class="form-control" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Tenant:</label>
+        <select v-model="tenant_id" class="form-select" required>
           <option disabled value="">Select tenant</option>
           <option v-for="t in tenants" :key="t.id" :value="t.id">{{ t.name }}</option>
         </select>
-      </label><br />
-      <button type="submit">Register</button>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Register</button>
+      </div>
     </form>
-    <div v-if="error" style="color:red">{{ error }}</div>
+    <div v-if="error" class="alert alert-danger">{{ error }}</div>
   </div>
 </template>
 

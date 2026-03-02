@@ -1,25 +1,25 @@
 <template>
-  <div>
-    <h2>Pending Bookings for My Cars</h2>
-    <button @click="fetchOwnerBookings">Refresh</button>
-    <ul>
-      <li v-for="booking in ownerBookings" :key="booking.id">
+  <div class="container py-4">
+    <h2 class="mb-3">Pending Bookings for My Cars</h2>
+    <button class="btn btn-primary mb-3" @click="fetchOwnerBookings">Refresh</button>
+    <ul class="list-group mb-4">
+      <li v-for="booking in ownerBookings" :key="booking.id" class="list-group-item">
         <span>
           <b>Booking #{{ booking.id }}</b> | Car ID: {{ booking.car_id }} | User: {{ booking.borrower_user_id }}<br>
           From: {{ booking.start_time }}<br>
           To: {{ booking.end_time }}<br>
           Status: <b>{{ booking.status }}</b> | Cost: <b>{{ booking.total_cost }} €</b><br>
           <span v-if="booking.status === 'requested'">
-            <button @click="confirmBooking(booking.id)">Confirm</button>
-            <button @click="denyBooking(booking.id)">Deny</button>
+            <button class="btn btn-success btn-sm me-2" @click="confirmBooking(booking.id)">Confirm</button>
+            <button class="btn btn-danger btn-sm" @click="denyBooking(booking.id)">Deny</button>
           </span>
-          <span v-else-if="booking.status === 'confirmed'" style="color:green">Confirmed</span>
-          <span v-else-if="booking.status === 'denied'" style="color:red">Denied</span>
-          <span v-else-if="booking.status === 'cancelled'" style="color:red">Cancelled</span>
+          <span v-else-if="booking.status === 'confirmed'" class="text-success">Confirmed</span>
+          <span v-else-if="booking.status === 'denied'" class="text-danger">Denied</span>
+          <span v-else-if="booking.status === 'cancelled'" class="text-danger">Cancelled</span>
         </span>
       </li>
     </ul>
-    <div v-if="ownerBookingError" style="color:red">{{ ownerBookingError }}</div>
+    <div v-if="ownerBookingError" class="alert alert-danger">{{ ownerBookingError }}</div>
   </div>
 </template>
 

@@ -1,12 +1,20 @@
 <template>
-  <div>
-    <h2>Login</h2>
-    <form @submit.prevent="login">
-      <label>Email: <input v-model="email" type="email" required /></label><br />
-      <label>Password: <input v-model="password" type="password" required /></label><br />
-      <button type="submit">Login</button>
+  <div class="container py-4">
+    <h2 class="mb-3">Login</h2>
+    <form @submit.prevent="login" class="row g-3 mb-4">
+      <div class="col-md-6">
+        <label class="form-label">Email:</label>
+        <input v-model="email" type="email" class="form-control" required />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Password:</label>
+        <input v-model="password" type="password" class="form-control" required />
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
     </form>
-    <div v-if="error" style="color:red">{{ error }}</div>
+    <div v-if="error" class="alert alert-danger">{{ error }}</div>
   </div>
 </template>
 

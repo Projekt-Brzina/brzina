@@ -1,75 +1,76 @@
 <template>
-  <div>
-    <h2>Available Cars</h2>
-    <button @click="fetchCars">Refresh</button>
-    <div v-if="loading">Loading...</div>
-    <ul v-else>
-      <li v-for="car in filteredCars" :key="car.id">
+  <div class="container py-4">
+    <h2 class="mb-3">Available Cars</h2>
+    <button class="btn btn-primary mb-3" @click="fetchCars">Refresh</button>
+    <div v-if="loading" class="mb-3">Loading...</div>
+    <ul v-else class="list-group mb-4">
+      <li v-for="car in filteredCars" :key="car.id" class="list-group-item">
         <b>{{ car.brand }} {{ car.model }}</b> ({{ car.plate }})<br>
         Year: {{ car.year }} | Color: {{ car.color }}<br>
         Rate: <b>{{ car.hourly_rate }} €/h</b><br>
         <span v-if="car.description">Description: {{ car.description }}</span><br>
         <span v-if="ownerNames[car.owner_user_id]">Owner: {{ ownerNames[car.owner_user_id] }}</span><br>
-        <span>Status: <b>{{ car.status === 'inactive' ? 'Unavailable' : 'Available' }}</b></span>
+        <span>Status: <b :class="car.status === 'inactive' ? 'text-danger' : 'text-success'">{{ car.status === 'inactive' ? 'Unavailable' : 'Available' }}</b></span>
       </li>
     </ul>
 
     <div v-if="isLoggedIn">
       <h3>Your Cars</h3>
       <div v-if="myLoading">Loading...</div>
-      <ul v-else>
-        <li v-for="car in myCars" :key="car.id">
+      <ul v-else class="list-group mb-4">
+        <li v-for="car in myCars" :key="car.id" class="list-group-item">
           <span v-if="editCarId !== car.id">
             <b>{{ car.brand }} {{ car.model }}</b> ({{ car.plate }})<br>
             Year: {{ car.year }} | Color: {{ car.color }}<br>
             Rate: <b>{{ car.hourly_rate }} €/h</b><br>
             <span v-if="car.description">Description: {{ car.description }}</span><br>
-            <span>Status: <b>{{ car.status === 'inactive' ? 'Unavailable' : 'Available' }}</b></span><br>
-            <button @click="toggleAvailability(car)">
+            <span>Status: <b :class="car.status === 'inactive' ? 'text-danger' : 'text-success'">{{ car.status === 'inactive' ? 'Unavailable' : 'Available' }}</b></span><br>
+            <button class="btn btn-outline-secondary btn-sm me-2" @click="toggleAvailability(car)">
               Mark as {{ car.status === 'inactive' ? 'Available' : 'Unavailable' }}
             </button>
-            <button @click="startEditCar(car)">Edit</button>
-            <button @click="deleteCar(car.id)">Delete</button>
+            <button class="btn btn-secondary btn-sm me-2" @click="startEditCar(car)">Edit</button>
+            <button class="btn btn-danger btn-sm" @click="deleteCar(car.id)">Delete</button>
           </span>
-          <span v-else>
-            <input v-model="editCar.brand" placeholder="Brand" />
-            <input v-model="editCar.model" placeholder="Model" />
-            <input v-model="editCar.plate" placeholder="Plate" />
-            <input v-model="editCar.hourly_rate" placeholder="Hourly Rate" type="number" step="0.01" />
-            <input v-model="editCar.year" placeholder="Year" type="number" />
-            <input v-model="editCar.color" placeholder="Color" />
-            <input v-model="editCar.description" placeholder="Description" />
-            <label>
-              <select v-model="editCar.status">
+          <span v-else class="d-flex flex-wrap gap-2 align-items-center">
+            <input v-model="editCar.brand" placeholder="Brand" class="form-control form-control-sm w-auto" />
+            <input v-model="editCar.model" placeholder="Model" class="form-control form-control-sm w-auto" />
+            <input v-model="editCar.plate" placeholder="Plate" class="form-control form-control-sm w-auto" />
+            <input v-model="editCar.hourly_rate" placeholder="Hourly Rate" type="number" step="0.01" class="form-control form-control-sm w-auto" />
+            <input v-model="editCar.year" placeholder="Year" type="number" class="form-control form-control-sm w-auto" />
+            <input v-model="editCar.color" placeholder="Color" class="form-control form-control-sm w-auto" />
+            <input v-model="editCar.description" placeholder="Description" class="form-control form-control-sm w-auto" />
+            <label class="form-label mb-0">
+              <select v-model="editCar.status" class="form-select form-select-sm w-auto">
                 <option value="active">Available</option>
                 <option value="inactive">Unavailable</option>
               </select>
             </label>
-            <button @click="saveEditCar(car.id)">Save</button>
-            <button @click="cancelEditCar">Cancel</button>
+            <button class="btn btn-success btn-sm me-2" @click="saveEditCar(car.id)">Save</button>
+            <button class="btn btn-secondary btn-sm" @click="cancelEditCar">Cancel</button>
           </span>
         </li>
       </ul>
 
       <h3>Add a Car</h3>
-      <form @submit.prevent="addCar">
-        <input v-model="brand" placeholder="Brand" required minlength="2" />
-        <input v-model="model" placeholder="Model" required minlength="1" />
-        <input v-model="plate" placeholder="Plate" required minlength="3" />
-        <input v-model="hourly_rate" placeholder="Hourly Rate" type="number" step="0.01" required min="0.01" />
-        <input v-model="year" placeholder="Year" type="number" min="1900" max="2100" />
-        <input v-model="color" placeholder="Color" />
-        <input v-model="description" placeholder="Description" />
-        <label>
-          <select v-model="status">
+      <form @submit.prevent="addCar" class="row g-3 mb-4">
+        <div class="col-md-3"><input v-model="brand" class="form-control" placeholder="Brand" required minlength="2" /></div>
+        <div class="col-md-3"><input v-model="model" class="form-control" placeholder="Model" required minlength="1" /></div>
+        <div class="col-md-3"><input v-model="plate" class="form-control" placeholder="Plate" required minlength="3" /></div>
+        <div class="col-md-3"><input v-model="hourly_rate" class="form-control" placeholder="Hourly Rate" type="number" step="0.01" required min="0.01" /></div>
+        <div class="col-md-3"><input v-model="year" class="form-control" placeholder="Year" type="number" min="1900" max="2100" /></div>
+        <div class="col-md-3"><input v-model="color" class="form-control" placeholder="Color" /></div>
+        <div class="col-md-3"><input v-model="description" class="form-control" placeholder="Description" /></div>
+        <div class="col-md-3">
+          <select v-model="status" class="form-select">
             <option value="active">Available</option>
             <option value="inactive">Unavailable</option>
           </select>
-          Status
-        </label>
-        <button type="submit">Add Car</button>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">Add Car</button>
+        </div>
       </form>
-      <div v-if="carError" style="color:red">{{ carError }}</div>
+      <div v-if="carError" class="alert alert-danger">{{ carError }}</div>
     </div>
   </div>
 </template>
