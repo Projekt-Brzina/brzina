@@ -1,0 +1,4 @@
+# NOTES:
+# - Prometheus will scrape all your services on port 8000 (default FastAPI port)
+# - If your services use a different port, update the configmap
+# - Access Prometheus at http://<cluster-ip>:9090

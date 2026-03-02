@@ -1,0 +1,39 @@
+dependencies:
+- name: auth
+  repository: file://../auth
+  version: 0.1.0
+- name: car
+  repository: file://../car
+  version: 0.1.0
+- name: booking
+  repository: file://../booking
+  version: 0.1.0
+- name: payment
+  repository: file://../payment
+  version: 0.1.0
+- name: api
+  repository: file://../api
+  version: 0.1.0
+- name: frontend
+  repository: file://../frontend
+  version: 0.1.0
+- name: grafana
+  repository: file://../grafana
+  version: 0.1.0
+- name: prometheus
+  repository: file://../prometheus
+  version: 0.1.0
+- name: kafka
+  repository: file://../kafka
+  version: 0.1.0
+- name: postgres
+  repository: file://../postgres
+  version: 0.1.0
+- name: nginx-ingress
+  repository: file://../nginx-ingress
+  version: 0.1.0
+- name: ingress
+  repository: file://../ingress
+  version: 0.1.0
+digest: sha256:e3413c7ec825f4ddc6a8db41cfcffc7d084e0543adb86838436fa7608818b2d2
+generated: "2026-03-02T07:00:27.8072996+01:00"

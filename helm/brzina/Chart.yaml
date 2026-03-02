@@ -26,6 +26,12 @@ dependencies:
   - name: frontend
     version: 0.1.0
     repository: "file://../frontend"
+  - name: grafana
+    version: "0.1.0"
+    repository: "file://../grafana"
+  - name: prometheus
+    version: "0.1.0"
+    repository: "file://../prometheus"
   - name: kafka
     version: 0.1.0
     repository: "file://../kafka"

@@ -1,8 +1,9 @@
+def create_app() -> FastAPI:
 from fastapi import FastAPI
 from .config import settings
 from .db import get_pool, close_pool
 from .routers import health, example
-
+from prometheus_fastapi_instrumentator import Instrumentator
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -14,10 +15,10 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(example.router)
 
-        # OpenAPI docs endpoint (default at /docs, /openapi.json)
-        @app.get("/openapi", include_in_schema=False)
-        async def custom_openapi():
-            return app.openapi()
+    # OpenAPI docs endpoint (default at /docs, /openapi.json)
+    @app.get("/openapi", include_in_schema=False)
+    async def custom_openapi():
+        return app.openapi()
 
     @app.on_event("startup")
     async def startup_event():
@@ -27,7 +28,9 @@ def create_app() -> FastAPI:
     async def shutdown_event():
         await close_pool()
 
-    return app
+    # Prometheus metrics
+    Instrumentator().instrument(app).expose(app)
 
+    return app
 
 app = create_app()

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from .routers import auth, health
 from .db import get_pool, close_pool
 from .config import settings
-
+from prometheus_fastapi_instrumentator import Instrumentator
 
 def create_app():
     app = FastAPI(title=settings.service_name)
@@ -27,7 +27,9 @@ def create_app():
     async def shutdown():
         await close_pool()
 
-    return app
+    # Prometheus metrics
+    Instrumentator().instrument(app).expose(app)
 
+    return app
 
 app = create_app()

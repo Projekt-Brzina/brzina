@@ -1,0 +1,5 @@
+# NOTES:
+# - Default admin user/password: admin/admin
+# - Access Grafana at http://<cluster-ip>:3000
+# - Prometheus is pre-configured as a data source (see configmap)
+# - Change admin password in values.yaml or via secret.yaml for production

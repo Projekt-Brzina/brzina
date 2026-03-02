@@ -7,3 +7,4 @@ pyjwt
 python-jose
 pydantic-settings
 pydantic[email]
+prometheus-fastapi-instrumentator
