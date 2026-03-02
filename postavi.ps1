@@ -44,6 +44,8 @@ helm upgrade --install kafka helm/kafka -n brzina --set image.pullPolicy=Always
 
 helm upgrade --install auth helm/auth -n brzina --set image.pullPolicy=Always
 
+helm upgrade --install brzina helm/brzina -n brzina
+
 kubectl run -it --rm debug --image=alpine --restart=Never -n brzina -- sh
 
 # 6. Deploy ingress controller and ingress
