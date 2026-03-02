@@ -34,13 +34,13 @@ helm install car helm/car
 helm install payment helm/payment
 helm install frontend helm/frontend
 
-helm upgrade --install api helm/api -n brzina
-helm upgrade --install auth helm/auth -n brzina
-helm upgrade --install booking helm/booking -n brzina
-helm upgrade --install car helm/car -n brzina
-helm upgrade --install payment helm/payment -n brzina
-helm upgrade --install frontend helm/frontend -n brzina
-helm upgrade --install kafka helm/kafka -n brzina
+helm upgrade --install api helm/api -n brzina --set image.pullPolicy=Always
+helm upgrade --install auth helm/auth -n brzina --set image.pullPolicy=Always
+helm upgrade --install booking helm/booking -n brzina --set image.pullPolicy=Always
+helm upgrade --install car helm/car -n brzina --set image.pullPolicy=Always
+helm upgrade --install payment helm/payment -n brzina --set image.pullPolicy=Always
+helm upgrade --install frontend helm/frontend -n brzina --set image.pullPolicy=Always
+helm upgrade --install kafka helm/kafka -n brzina --set image.pullPolicy=Always
 
 helm upgrade --install auth helm/auth -n brzina --set image.pullPolicy=Always
 
@@ -49,6 +49,7 @@ kubectl run -it --rm debug --image=alpine --restart=Never -n brzina -- sh
 # 6. Deploy ingress controller and ingress
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml
 kubectl apply -f infra/k8s/ingress.yaml --namespace=ingress-nginx
+kubectl apply -f infra/k8s/default-backend.yaml
 
 # 7. Show status
 kubectl get pods,svc,deployments
@@ -64,7 +65,7 @@ kubectl delete pod -l app=car -n brzina
 kubectl delete pod -l app=payment -n brzina
 kubectl delete pod -l app=frontend -n brzina
 
-curl -H 
+Invoke-WebRequest -H 
 "Authorization: Bearer <>" 
 -d '{"brand":"eet","hourly_rate":3, "model": "rwe", "plate": 123123, "tenant_id":1}'  -v http://car-car:8000/cars/
 

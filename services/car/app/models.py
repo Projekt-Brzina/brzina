@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 
+
 class CarCreate(BaseModel):
     brand: str
     model: str
@@ -13,6 +14,7 @@ class CarCreate(BaseModel):
     color: str = None
     description: str = None
     tenant_id: int
+    status: str = 'active'  # 'active' means available, 'inactive' means unavailable
 
 
 
@@ -28,5 +30,6 @@ class Car(BaseModel):
     description: str = None
     owner_user_id: int
     tenant_id: int
+    status: str = 'active'
     created_at: datetime = None
     updated_at: datetime = None

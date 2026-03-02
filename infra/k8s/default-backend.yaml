@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: default-backend
+  namespace: brzina
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: default-backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: default-backend
+  namespace: brzina
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: default-backend
+  template:
+    metadata:
+      labels:
+        app: default-backend
+    spec:
+      containers:
+        - name: default-backend
+          image: hashicorp/http-echo
+          args:
+            - "-text=Service temporarily unavailable. Try refreshing in a few."
+            - "-listen=:8080"
+          ports:
+            - containerPort: 8080

@@ -7,6 +7,7 @@ import Bookings from './pages/Bookings.vue';
 import Login from './pages/Login.vue';
 import Register from './pages/Register.vue';
 
+
 import Profile from './pages/Profile.vue';
 import Admin from './pages/Admin.vue';
 

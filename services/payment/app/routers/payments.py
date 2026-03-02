@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from ..db import get_pool
 from ..models import PaymentCreate, Payment
+from ..kafka_producer import send_payment_completed_event
 
 router = APIRouter(prefix="/payments", tags=["payments"])
+
 
 
 @router.post("/", response_model=Payment)
@@ -43,6 +45,9 @@ async def create_payment(payload: PaymentCreate):
             payload.tenant_id,
             amount,
         )
+
+    # Emit payment_completed event
+    await send_payment_completed_event(payload.booking_id, payload.tenant_id, amount)
 
     return Payment(**row)
 

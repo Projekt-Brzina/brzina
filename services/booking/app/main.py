@@ -1,9 +1,11 @@
+from .kafka_consumer import start_payment_consumer_loop
 from fastapi import FastAPI
 from .config import settings
 from .db import get_pool, close_pool
 from .routers import bookings, health
 import structlog
 import logging
+from prometheus_fastapi_instrumentator import Instrumentator
 
 def setup_logging():
     logging.basicConfig(format="%(message)s", stream=None, level=logging.INFO)
@@ -17,7 +19,6 @@ def setup_logging():
         cache_logger_on_first_use=True,
     )
 
-from prometheus_fastapi_instrumentator import Instrumentator
 
 def create_app() -> FastAPI:
     setup_logging()
@@ -32,9 +33,11 @@ def create_app() -> FastAPI:
 
     Instrumentator().instrument(app).expose(app)
 
+
     @app.on_event("startup")
     async def startup():
         await get_pool()
+        start_payment_consumer_loop()
 
     @app.on_event("shutdown")
     async def shutdown():

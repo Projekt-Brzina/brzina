@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS cars (
     year           INTEGER,
     color          VARCHAR(64),
     description    TEXT,
+    available      BOOLEAN NOT NULL DEFAULT TRUE,
     status         VARCHAR(32) NOT NULL DEFAULT 'active',
     created_at     TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at     TIMESTAMP NOT NULL DEFAULT NOW(),

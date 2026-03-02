@@ -10,7 +10,7 @@
       <router-link v-if="isLoggedIn" to="/profile" style="margin-left:10px">Profile</router-link>
       <router-link v-if="isLoggedIn && userInfo.is_admin" to="/admin" style="margin-left:10px; color:orange">Admin</router-link>
       <span v-if="isLoggedIn" style="margin-left:20px; color:green">
-        Logged in as {{ userInfo.name || userInfo.email }} (tenant: {{ userInfo.tenant_id }})<span v-if="userInfo.payment_info"> | Payment: {{ userInfo.payment_info }}</span>
+        Logged in as {{ userInfo.name || userInfo.email }} (tenant: {{ tenantName }})<span v-if="userInfo.payment_info"> | Payment: {{ userInfo.payment_info }}</span>
       </span>
       <button v-if="isLoggedIn" @click="logout" style="margin-left:10px">Logout</button>
     </nav>
@@ -24,10 +24,33 @@ import axios from 'axios';
 
 const isLoggedIn = ref(!!localStorage.getItem('jwt'));
 const userInfo = ref({});
+const tenants = ref([]);
+const tenantName = ref('');
+
+async function fetchTenants() {
+  try {
+    const res = await axios.get('/api/tenants/');
+    tenants.value = res.data;
+    updateTenantName();
+  } catch (e) {
+    tenants.value = [];
+    tenantName.value = '';
+  }
+}
+
+function updateTenantName() {
+  if (!userInfo.value.tenant_id || tenants.value.length === 0) {
+    tenantName.value = userInfo.value.tenant_id || '';
+    return;
+  }
+  const t = tenants.value.find(t => t.id === userInfo.value.tenant_id);
+  tenantName.value = t ? t.name : userInfo.value.tenant_id;
+}
 
 async function fetchUserInfo() {
   if (!isLoggedIn.value) {
     userInfo.value = {};
+    tenantName.value = '';
     return;
   }
   try {
@@ -35,12 +58,17 @@ async function fetchUserInfo() {
       headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` }
     });
     userInfo.value = res.data;
+    updateTenantName();
   } catch (e) {
     userInfo.value = {};
+    tenantName.value = '';
   }
 }
 
-onMounted(fetchUserInfo);
+onMounted(async () => {
+  await fetchUserInfo();
+  await fetchTenants();
+});
 
 function logout() {
   localStorage.removeItem('jwt');

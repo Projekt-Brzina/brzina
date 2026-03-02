@@ -1,4 +1,4 @@
-
+from fastapi import Body
 from fastapi import APIRouter, HTTPException
 from ..db import get_pool
 from ..models import BookingCreate, Booking
@@ -147,19 +147,21 @@ async def replay_booking_events(booking_id: int, tenant_id: int):
     return [Booking(**r) for r in rows]
 
 
+
 @router.patch("/{booking_id}/cancel", response_model=Booking)
-async def cancel_booking(booking_id: int, tenant_id: int):
+async def cancel_booking(booking_id: int, tenant_id: int, cancellation_reason: str = Body(None)):
     pool = await get_pool()
     async with pool.acquire() as conn:
         row = await conn.fetchrow(
             """
             UPDATE bookings
-            SET status='cancelled'
+            SET status='cancelled', cancellation_reason=$3
             WHERE id=$1 AND tenant_id=$2
-            RETURNING id, car_id, borrower_user_id, tenant_id, start_time, end_time, status
+            RETURNING id, car_id, borrower_user_id, tenant_id, start_time, end_time, status, cancellation_reason
             """,
             booking_id,
             tenant_id,
+            cancellation_reason
         )
         if not row:
             raise HTTPException(status_code=404, detail="Booking not found")

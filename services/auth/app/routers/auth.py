@@ -1,3 +1,4 @@
+from typing import List
 import jwt
 from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -27,6 +28,7 @@ def get_jwt_payload(request: Request):
         return payload
     except Exception:
         return None
+
 
 @router.put("/me")
 async def update_me(update: UserUpdate, request: Request):

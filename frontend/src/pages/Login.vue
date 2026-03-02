@@ -13,6 +13,9 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const email = ref('');
 const password = ref('');
@@ -30,7 +33,8 @@ async function login() {
     // Set axios default Authorization header
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.access_token}`;
     error.value = '';
-    alert('Login successful!');
+    // Optionally, you can emit an event or use a global store, but for now reload app state:
+    window.location.href = '/'; // Redirect to home and reloads state
   } catch (e) {
     error.value = 'Login failed.';
   }

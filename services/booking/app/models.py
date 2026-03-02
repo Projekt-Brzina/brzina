@@ -15,6 +15,8 @@ class BookingCreate(BaseModel):
 
 
 
+from typing import Union
+
 class Booking(BaseModel):
     id: int
     car_id: int
@@ -26,5 +28,5 @@ class Booking(BaseModel):
     status: str
     payment_status: str = None
     cancellation_reason: str = None
-    created_at: str = None
-    updated_at: str = None
+    created_at: Union[str, datetime, None] = None
+    updated_at: Union[str, datetime, None] = None

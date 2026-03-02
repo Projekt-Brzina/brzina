@@ -1,4 +1,5 @@
 
+import urllib.parse
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 import structlog
@@ -106,6 +107,66 @@ async def health():
         logger.error("health_check_failed", error=str(e))
         return {"status": "error", "details": str(e)}
 
+# Proxy PATCH /api/bookings/{booking_id}/confirm to booking service
+@app.api_route("/api/bookings/{booking_id}/confirm", methods=["PATCH"])
+async def bookings_confirm(booking_id: int, request: Request):
+    return await proxy_request("PATCH", f"{BOOKING_SERVICE_URL}/bookings/{booking_id}/confirm", request, require_jwt=True)
+
+# Proxy PATCH /api/bookings/{booking_id}/deny to booking service
+@app.api_route("/api/bookings/{booking_id}/deny", methods=["PATCH"])
+async def bookings_deny(booking_id: int, request: Request):
+    return await proxy_request("PATCH", f"{BOOKING_SERVICE_URL}/bookings/{booking_id}/deny", request, require_jwt=True)
+
+# Proxy GET /api/bookings/owner to booking service
+@app.api_route("/api/bookings/owner", methods=["GET"])
+async def bookings_owner(request: Request):
+    return await proxy_request("GET", f"{BOOKING_SERVICE_URL}/bookings/owner", request, require_jwt=True)
+
+# Proxy PATCH /api/bookings/{booking_id}/cancel to booking service
+@app.api_route("/api/bookings/{booking_id}/cancel", methods=["PATCH"])
+async def bookings_cancel(booking_id: int, request: Request):
+    return await proxy_request("PATCH", f"{BOOKING_SERVICE_URL}/bookings/{booking_id}/cancel", request, require_jwt=True)
+
+# Proxy POST /api/payments to payment service
+@app.api_route("/api/payments", methods=["POST"])
+async def payments_create(request: Request):
+    return await proxy_request("POST", f"{PAYMENT_SERVICE_URL}/payments", request, require_jwt=True)
+# Proxy route for /api/cars/my (must be above /api/cars/{car_id})
+@app.api_route("/api/cars/my", methods=["GET"])
+async def cars_my(request: Request):
+    # Extract JWT from Authorization header
+    auth = request.headers.get("authorization")
+    user_id = None
+    if auth and auth.lower().startswith("bearer "):
+        token = auth[7:]
+        try:
+            payload = jwt.decode(token, options={"verify_signature": False})
+            user_id = payload.get("id") or payload.get("user_id")
+        except Exception:
+            pass
+    # Forward all query params, but override/add user_id and tenant_id
+    query = dict(request.query_params)
+    # Try to extract tenant_id from query or JWT if not present
+    tenant_id = query.get("tenant_id")
+    if not tenant_id and auth and auth.lower().startswith("bearer "):
+        token = auth[7:]
+        try:
+            payload = jwt.decode(token, options={"verify_signature": False})
+            tenant_id = payload.get("tenant_id")
+        except Exception:
+            pass
+    if user_id:
+        query["user_id"] = str(user_id)
+    if tenant_id:
+        query["tenant_id"] = str(tenant_id)
+    query_str = urllib.parse.urlencode(query)
+    url = f"{CAR_SERVICE_URL}/cars/my"
+    if query_str:
+        url += f"?{query_str}"
+    return await proxy_request("GET", url, request, require_jwt=True)
+
+
+
 
 # Cars CRUD (require JWT)
 
@@ -135,15 +196,26 @@ async def cars_root(request: Request):
                     headers={k: v for k, v in resp.headers.items() if k.lower() != 'content-encoding'}
                 )
 
-@app.api_route("/cars/{car_id}", methods=["GET", "PUT", "DELETE"])
+@app.api_route("/cars/{car_id}", methods=["GET", "PUT", "DELETE", "PATCH"])
 async def cars_detail(car_id: int, request: Request):
+    return await proxy_request(request.method, f"{CAR_SERVICE_URL}/cars/{car_id}", request, require_jwt=True)
+@app.api_route("/api/cars/{car_id}", methods=["GET", "PUT", "DELETE", "PATCH"])
+async def cars_detail_api(car_id: int, request: Request):
     return await proxy_request(request.method, f"{CAR_SERVICE_URL}/cars/{car_id}", request, require_jwt=True)
 
 
-# Proxy route for /api/cars/my
-@app.api_route("/api/cars/my", methods=["GET"])
-async def cars_my(request: Request):
-    return await proxy_request("GET", f"{CAR_SERVICE_URL}/cars/my", request, require_jwt=True)
+
+# Users endpoint (proxied to auth service)
+@app.api_route("/api/users", methods=["GET"])
+@app.api_route("/api/users/", methods=["GET"])
+async def users_root(request: Request):
+    return await proxy_request("GET", f"{AUTH_SERVICE_URL}/users", request)
+
+# Also support /users and /users/ for ingress rewrite
+@app.api_route("/users", methods=["GET"])
+@app.api_route("/users/", methods=["GET"])
+async def users_root_rewrite(request: Request):
+    return await proxy_request("GET", f"{AUTH_SERVICE_URL}/users", request)
 
 
 # Bookings CRUD (require JWT)
