@@ -11,7 +11,7 @@ auth:
     type: ClusterIP
     port: 8000
   env:
-    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+    DATABASE_URL: "postgresql://brzina_user:changeme@brzina-postgres:5432/brzina"
     JWT_SECRET: "supersecret"
 
 car:
@@ -24,7 +24,7 @@ car:
     type: ClusterIP
     port: 8000
   env:
-    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+    DATABASE_URL: "postgresql://brzina_user:changeme@brzina-postgres:5432/brzina"
 
 booking:
   replicaCount: 1
@@ -36,7 +36,7 @@ booking:
     type: ClusterIP
     port: 8000
   env:
-    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+    DATABASE_URL: "postgresql://brzina_user:changeme@brzina-postgres:5432/brzina"
     KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
 
 payment:
@@ -49,7 +49,7 @@ payment:
     type: ClusterIP
     port: 8000
   env:
-    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+    DATABASE_URL: "postgresql://brzina_user:changeme@brzina-postgres:5432/brzina"
     KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
 
 api:
@@ -62,7 +62,7 @@ api:
     type: ClusterIP
     port: 8000
   env:
-    DATABASE_URL: "postgres://brzina_user:changeme@postgres.brzina.svc.cluster.local:5432/brzina"
+    DATABASE_URL: "postgresql://brzina_user:changeme@brzina-postgres:5432/brzina"
 
 frontend:
   replicaCount: 1

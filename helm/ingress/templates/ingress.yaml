@@ -14,13 +14,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: brzina-frontend
                 port:
                   number: 80
           - path: {{ .Values.apiPath }}(.*)
             pathType: Prefix
             backend:
               service:
-                name: api
+                name: brzina-api
                 port:
-                  number: 80
+                  number: 8000

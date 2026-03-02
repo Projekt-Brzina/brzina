@@ -1,0 +1,4 @@
+apiVersion: v2
+name: default-backend
+version: 0.1.0
+description: Default backend for 404s and fallback

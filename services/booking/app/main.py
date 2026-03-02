@@ -33,6 +33,9 @@ def create_app() -> FastAPI:
 
     Instrumentator().instrument(app).expose(app)
 
+    @app.get("/")
+    def root():
+        return {"status": "ok", "service": "booking"}
 
     @app.on_event("startup")
     async def startup():

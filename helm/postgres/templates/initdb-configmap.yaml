@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-initdb
+  labels:
+    app: postgres
+    chart: postgres
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    checksum/init.sql: {{ .Files.Get "infra/db/init.sql" | sha256sum }}
+data:
+  init.sql: |
+{{ .Files.Get "init.sql" | indent 4 }}

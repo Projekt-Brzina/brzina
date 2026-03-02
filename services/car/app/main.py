@@ -97,6 +97,10 @@ def create_app():
     async def shutdown():
         await close_pool()
 
+    @app.get("/")
+    def root():
+        return {"status": "ok", "service": "car"}
+
     return app
 
 app = create_app()

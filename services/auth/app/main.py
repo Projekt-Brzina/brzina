@@ -19,6 +19,10 @@ def create_app():
     async def custom_openapi():
         return app.openapi()
 
+    @app.get("/")
+    def root():
+        return {"status": "ok", "service": "auth"}
+
     @app.on_event("startup")
     async def startup():
         await get_pool()

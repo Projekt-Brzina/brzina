@@ -14,6 +14,8 @@ spec:
       labels:
         app: {{ include "car.name" . }}
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: car
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -28,13 +30,13 @@ spec:
             httpGet:
               path: /
               port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 5
+            initialDelaySeconds: 10
+            periodSeconds: 60
             failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /
               port: 8000
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            initialDelaySeconds: 30
+            periodSeconds: 60
             failureThreshold: 5

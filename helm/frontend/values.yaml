@@ -1,6 +1,6 @@
 replicaCount: 1
 image:
-  repository: brzina-frontend
+  repository: r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-frontend
   tag: latest
   pullPolicy: IfNotPresent
 service:

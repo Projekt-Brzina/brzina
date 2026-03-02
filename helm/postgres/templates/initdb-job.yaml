@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-initdb
+  labels:
+    app: postgres
+    chart: postgres
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: initdb
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PGUSER
+              value: {{ .Values.env.POSTGRES_USER | quote }}
+            - name: PGPASSWORD
+              value: {{ .Values.env.POSTGRES_PASSWORD | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.env.POSTGRES_DB | quote }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Waiting for Postgres to be ready..."
+              for i in {1..30}; do
+                pg_isready -h brzina-postgres -U $PGUSER && break
+                echo "Postgres is not ready yet. Waiting..."
+                sleep 2
+              done
+              echo "Running schema init..."
+              psql -h brzina-postgres -U $PGUSER -d $POSTGRES_DB -f /init/init.sql
+          volumeMounts:
+            - name: init-sql
+              mountPath: /init
+      volumes:
+        - name: init-sql
+          configMap:
+            name: postgres-initdb

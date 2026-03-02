@@ -31,6 +31,10 @@ def create_app():
 
 	Instrumentator().instrument(app).expose(app)
 
+	@app.get("/")
+	def root():
+		return {"status": "ok", "service": "payment"}
+
 	@app.on_event("startup")
 	async def startup():
 		await get_pool()

@@ -9,6 +9,14 @@ docker build --no-cache -t brzina-car:latest services/car
 docker build --no-cache -t brzina-payment:latest services/payment
 docker build --no-cache -t brzina-frontend:latest frontend
 
+
+docker build --no-cache -t r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-api:latest services/api
+docker build --no-cache -t r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-auth:latest services/auth
+docker build --no-cache -t r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-booking:latest services/booking
+docker build --no-cache -t r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-car:latest services/car
+docker build --no-cache -t r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-payment:latest services/payment
+docker build --no-cache -t r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-frontend:latest frontend
+
 # 3. Load images into Kind
 kind load docker-image brzina-api:latest
 kind load docker-image brzina-auth:latest
@@ -16,6 +24,13 @@ kind load docker-image brzina-booking:latest
 kind load docker-image brzina-car:latest
 kind load docker-image brzina-payment:latest
 kind load docker-image brzina-frontend:latest
+
+docker push r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-api:latest
+docker push r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-auth:latest
+docker push r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-booking:latest
+docker push r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-car:latest
+docker push r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-payment:latest
+docker push r2limptl.eu-south-mil.container-registry.ovh.net/brzina-images/brzina-frontend:latest
 
 
 kubectl create namespace brzina
@@ -50,8 +65,8 @@ kubectl run -it --rm debug --image=alpine --restart=Never -n brzina -- sh
 
 # 6. Deploy ingress controller and ingress
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml
-kubectl apply -f infra/k8s/ingress.yaml --namespace=ingress-nginx
 kubectl apply -f infra/k8s/default-backend.yaml
+kubectl apply -f infra/k8s/ingress.yaml --namespace=ingress-nginx
 
 # 7. Show status
 kubectl get pods,svc,deployments

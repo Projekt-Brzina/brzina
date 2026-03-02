@@ -44,3 +44,7 @@ dependencies:
   - name: ingress
     version: 0.1.0
     repository: "file://../ingress"
+
+  - name: default-backend
+    version: 0.1.0
+    repository: "file://../default-backend"

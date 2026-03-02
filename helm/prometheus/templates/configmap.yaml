@@ -14,19 +14,19 @@ data:
           - targets: ['localhost:9090']
       - job_name: 'api'
         static_configs:
-          - targets: ['api:8000']
+          - targets: ['brzina-api:8000']
       - job_name: 'auth'
         static_configs:
-          - targets: ['auth:8000']
+          - targets: ['brzina-auth:8000']
       - job_name: 'booking'
         static_configs:
-          - targets: ['booking:8000']
+          - targets: ['brzina-booking:8000']
       - job_name: 'car'
         static_configs:
-          - targets: ['car:8000']
+          - targets: ['brzina-car:8000']
       - job_name: 'payment'
         static_configs:
-          - targets: ['payment:8000']
+          - targets: ['brzina-payment:8000']
       - job_name: 'template'
         static_configs:
-          - targets: ['template:8000']
+          - targets: ['brzina-template:8000']

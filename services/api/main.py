@@ -1,4 +1,3 @@
-
 import urllib.parse
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -46,6 +45,10 @@ Instrumentator().instrument(app).expose(app)
 async def custom_openapi():
     return app.openapi()
 
+@app.get("/")
+def root():
+    return {"status": "ok", "service": "api"}
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 CAR_SERVICE_URL = os.getenv("CAR_SERVICE_URL", "http://car-car:8000")
 BOOKING_SERVICE_URL = os.getenv("BOOKING_SERVICE_URL", "http://booking-booking:8000")
@@ -88,12 +91,14 @@ async def proxy_request(method, url, request: Request, with_body=True, require_j
                 content=data if with_body else None,
                 headers={k: v for k, v in headers.items() if k.lower() != 'host'},
             )
+            # Always return the backend's real status code and content
             return Response(
                 content=resp.content,
                 status_code=resp.status_code,
                 headers={k: v for k, v in resp.headers.items() if k.lower() != 'content-encoding'}
             )
         except httpx.RequestError as e:
+            # Only return 502 if the backend is unreachable
             return Response(content=str(e), status_code=status.HTTP_502_BAD_GATEWAY)
 
 @app.get("/health")
